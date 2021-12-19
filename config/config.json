@@ -15,9 +15,10 @@
   },
   "production": {
     "username": "root",
-    "password": null,
-    "database": "database_production",
+    "password": "myrootpw",
+    "database": "db_todolist",
     "host": "127.0.0.1",
+    "port": "3307",
     "dialect": "mysql"
   }
 }

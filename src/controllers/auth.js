@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
 
     if (!userExist) {
       return res.status(400).send({
-        status: "failed",
+        success: false,
         message: "Email or Password is invalid",
       });
     }
@@ -57,11 +57,13 @@ exports.login = async (req, res) => {
     res.send({
       success: true,
       data: {
-        id: userExist.id,
-        email: userExist.email,
-        fullName: userExist.fullName,
-        token,
+        user: {
+          id,
+          email,
+          fullName,
+        },
       },
+      token,
     });
   } catch (err) {
     console.log(err);
@@ -113,6 +115,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       {
         id: newUser.id,
+        fullName: newUser.fullName,
       },
       process.env.TOKEN_KEY
     );
@@ -127,7 +130,41 @@ exports.register = async (req, res) => {
     console.log(err);
     res.status(500).send({
       success: false,
-      message: err,
+      message: "Server Error",
+    });
+  }
+};
+
+// controller check auth token
+exports.checkAuth = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const dataUser = await Users.findOne({
+      where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "password"],
+      },
+    });
+
+    if (!dataUser) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.send({
+      success: true,
+      data: {
+        user: dataUser,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Server Error",
     });
   }
 };
