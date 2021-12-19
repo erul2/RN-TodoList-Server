@@ -107,7 +107,7 @@ exports.register = async (req, res) => {
 
     const newUser = await Users.create({
       ...req.body,
-      passwor: hassedPassword,
+      password: hassedPassword,
     });
 
     const token = jwt.sign(
@@ -127,7 +127,7 @@ exports.register = async (req, res) => {
     console.log(err);
     res.status(500).send({
       success: false,
-      message: "Server Error",
+      message: err,
     });
   }
 };
